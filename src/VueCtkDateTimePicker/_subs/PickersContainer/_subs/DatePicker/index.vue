@@ -157,14 +157,12 @@
   import YearMonthSelector from './_subs/YearMonthSelector'
   import WeekDays from './_subs/WeekDays'
   import CustomButton from '@/VueCtkDateTimePicker/_subs/CustomButton'
-  import KeyboardAccessibility from '@/VueCtkDateTimePicker/mixins/keyboard-accessibility'
 
   export default {
     name: 'DatePicker',
     components: {
       RangeShortcuts, YearMonthSelector, WeekDays, CustomButton
     },
-    mixins: [KeyboardAccessibility],
     props: {
       id: { type: String, default: null },
       value: { type: [String, Object], default: null },
