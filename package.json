@@ -40,7 +40,6 @@
     "babel-jest": "^23.6.0",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
-    "node-sass": "^4.13.0",
     "nuxt": "^2.9.2",
     "sass-loader": "^7.1.0",
     "vue-cli-plugin-webpack-bundle-analyzer": "^1.2.0",
@@ -90,5 +89,8 @@
     "type": "git",
     "url": "git+https://github.com/chronotruck/vue-ctk-date-time-picker.git"
   },
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "sass": "^1.44.0"
+  }
 }
