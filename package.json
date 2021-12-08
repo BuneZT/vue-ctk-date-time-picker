@@ -22,7 +22,7 @@
     "delete-dist-report": "rm ./dist/report.html",
     "delete:reports": "npm run delete-docs-report && npm run delete-dist-report"
   },
-  "dependencies": {
+  "peerDependencies": {
     "moment": "^2.24.0",
     "moment-range": "^4.0.1",
     "v-click-outside": "^2.0.2",
@@ -65,9 +65,9 @@
     "npm": ">= 3.0.0"
   },
   "files": [
-    "tsconfig.json",
-    "dist/",
-    "nuxt/"
+    "dist/*js",
+    "dist/*js.map",
+    "dist/*js.css"
   ],
   "homepage": "https://github.com/chronotruck/vue-ctk-date-time-picker/releases",
   "keywords": [
