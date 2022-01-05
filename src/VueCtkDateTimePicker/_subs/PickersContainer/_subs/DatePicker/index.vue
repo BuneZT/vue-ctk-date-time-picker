@@ -45,6 +45,7 @@
           class="datepicker-container-label flex-1 flex justify-content-center"
         >
           <TransitionGroup
+            v-if="!monthsOnly"
             :name="transitionLabelName"
             class="h-100 flex align-center flex-1 flex justify-content-right"
           >
@@ -61,7 +62,8 @@
           </TransitionGroup>
           <TransitionGroup
             :name="transitionLabelName"
-            class="h-100 flex align-center flex-1 flex"
+            class="h-100 flex align-center flex-1 flex justify-content-left"
+            :class="{'justify-content-center': monthsOnly }"
           >
             <CustomButton
               v-for="y in [year]"
