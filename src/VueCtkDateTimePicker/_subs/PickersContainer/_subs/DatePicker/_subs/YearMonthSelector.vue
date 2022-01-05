@@ -3,7 +3,10 @@
     class="year-month-selector flex flex-direction-column"
     :class="{'dark': dark}"
   >
-    <div class="flex justify-content-right">
+    <div
+      v-if="!hideClose"
+      class="flex justify-content-right"
+    >
       <CustomButton
         :color="dark ? '#757575' : '#424242'"
         :dark="dark"
@@ -64,7 +67,8 @@
       dark: { type: Boolean, default: null },
       color: { type: String, default: null },
       mode: { type: String, default: null },
-      month: { type: Object, default: null }
+      month: { type: Object, default: null },
+      hideClose: { type: Boolean, default: false }
     },
     data () {
       return {

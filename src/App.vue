@@ -230,6 +230,7 @@
                 :disabled-weekly="demo.options.disabledWeekly"
                 :right="demo.options.right"
                 :no-clear-button="demo.options.noClearButton"
+                :months-only="demo.options.monthsOnly"
               >
                 <input
                   v-if="
@@ -291,7 +292,8 @@
           'noKeyboard',
           'right',
           'noClearButton',
-          'noLabel'
+          'noLabel',
+          'monthsOnly'
         ],
         stringOptions: [
           'id',
@@ -496,7 +498,8 @@
               noHeader: true,
               noButton: true,
               overlay: true,
-              noShortcuts: true
+              monthsOnly: true
+
             },
             value: '2021-02-22',
             options: {
@@ -509,7 +512,8 @@
               noHeader: true,
               noButton: true,
               overlay: true,
-              noShortcuts: true
+              noShortcuts: true,
+              monthsOnly: true
             }
           }
         ],

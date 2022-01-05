@@ -1,7 +1,12 @@
 <template>
   <div
     :id="`${id}-DatePicker`"
-    :class="{'flex-1 inline': inline, 'p-0 range flex-1': range, 'is-dark': dark, 'has-shortcuts': range && !noShortcuts}"
+    :class="{
+      'flex-1 inline': inline,
+      'p-0 range flex-1': range,
+      'is-dark': dark,
+      'has-shortcuts': range && !noShortcuts,
+    }"
     class="datepicker-container flex flex-fixed"
   >
     <RangeShortcuts
@@ -20,11 +25,19 @@
           <button
             type="button"
             tabindex="-1"
-            class="datepicker-button datepicker-prev text-center h-100 flex align-center"
+            class="
+              datepicker-button datepicker-prev
+              text-center
+              h-100
+              flex
+              align-center
+            "
             @click="changeMonth('prev')"
           >
             <svg viewBox="0 0 1000 1000">
-              <path d="M 336.2 274.5 l -210.1 210 h -22.1 c 13 0 24 -45.5 23 23 s -10 23 -23 23 H 126.1 l 210.1 210.1 c 11 11 11 21 0 32 c -5 5 -10 7 -16 7 s -11 -2 -16 -7 l -249.1 -249 c -11 -11 -11 -21 0 -32 l 249.1 -249.1 c 21 -21.1 53 10.9 32 32 z" />
+              <path
+                d="M 336.2 274.5 l -210.1 210 h -22.1 c 13 0 24 -45.5 23 23 s -10 23 -23 23 H 126.1 l 210.1 210.1 c 11 11 11 21 0 32 c -5 5 -10 7 -16 7 s -11 -2 -16 -7 l -249.1 -249 c -11 -11 -11 -21 0 -32 l 249.1 -249.1 c 21 -21.1 53 10.9 32 32 z"
+              />
             </svg>
           </button>
         </div>
@@ -66,7 +79,14 @@
           <button
             type="button"
             tabindex="-1"
-            class="datepicker-button datepicker-next text-center h-100 flex align-center justify-content-right"
+            class="
+              datepicker-button datepicker-next
+              text-center
+              h-100
+              flex
+              align-center
+              justify-content-right
+            "
             @click="changeMonth('next')"
           >
             <svg viewBox="0 0 1000 1000">
@@ -79,14 +99,20 @@
         </div>
       </div>
       <WeekDays
+        v-if="!monthsOnly"
         :week-days="weekDays"
         :dark="dark"
       />
       <div
-        :style="{height: (monthDays.length + weekStart) > 35 ? '250px' : '210px'}"
+        :style="{
+          height: monthDays.length + weekStart > 35 ? '250px' : '210px',
+        }"
         class="month-container"
       >
-        <TransitionGroup :name="transitionDaysName">
+        <TransitionGroup
+          v-if="!monthsOnly"
+          :name="transitionDaysName"
+        >
           <div
             v-for="m in [month]"
             :key="m.month"
@@ -102,11 +128,11 @@
               :key="day.format('D')"
               :class="{
                 selected: isSelected(day) && !isDisabled(day),
-                disabled: (isDisabled(day) || isWeekEndDay(day)),
+                disabled: isDisabled(day) || isWeekEndDay(day),
                 enable: !(isDisabled(day) || isWeekEndDay(day)),
                 between: isBetween(day) && range,
                 first: firstInRange(day) && range,
-                last: lastInRange(day) && !!value.end && range
+                last: lastInRange(day) && !!value.end && range,
               }"
               :disabled="isDisabled(day) || isWeekEndDay(day)"
               type="button"
@@ -128,7 +154,7 @@
                 class="datepicker-day-keyboard-selected"
               />
               <span class="datepicker-day-text flex-1">
-                {{ day.format('D') }}
+                {{ day.format("D") }}
               </span>
             </button>
             <div
@@ -138,7 +164,19 @@
             />
           </div>
         </TransitionGroup>
+
+        <YearMonthSelector
+          v-else
+          :locale="locale"
+          :color="color"
+          :dark="dark"
+          mode="month"
+          :month="month"
+          :hide-close="true"
+          @input="selectYearMonth"
+        />
       </div>
+
       <YearMonthSelector
         v-if="selectingYearMonth"
         :locale="locale"
@@ -165,7 +203,10 @@
   export default {
     name: 'DatePicker',
     components: {
-      RangeShortcuts, YearMonthSelector, WeekDays, CustomButton
+      RangeShortcuts,
+      YearMonthSelector,
+      WeekDays,
+      CustomButton
     },
     mixins: [KeyboardAccessibility],
     props: {
@@ -178,17 +219,21 @@
       locale: { type: String, default: null },
       inline: { type: Boolean, default: null },
       noWeekendsDays: { type: Boolean, default: null },
-      disabledWeekly: { type: Array, default: () => ([]) },
+      disabledWeekly: { type: Array, default: () => [] },
       range: { type: Boolean, default: false },
-      disabledDates: { type: Array, default: () => ([]) },
-      enabledDates: { type: Array, default: () => ([]) },
+      disabledDates: { type: Array, default: () => [] },
+      enabledDates: { type: Array, default: () => [] },
       dark: { type: Boolean, default: false },
       month: { type: Object, default: null },
       height: { type: Number, default: null },
       noShortcuts: { type: Boolean, default: null },
       firstDayOfWeek: { type: Number, default: null },
-      customShortcuts: { type: Array, default: () => ([]) },
-      visible: { type: Boolean, default: null }
+      customShortcuts: { type: Array, default: () => [] },
+      visible: { type: Boolean, default: null },
+      monthsOnly: {
+        type: Boolean,
+        default: false
+      }
     },
     data () {
       return {
@@ -205,7 +250,7 @@
         }
       },
       endEmptyDays () {
-        const getDays = (this.monthDays.length + this.weekStart) > 35
+        const getDays = this.monthDays.length + this.weekStart > 35
         const number = getDays ? 42 : 35
         return number - this.monthDays.length - this.weekStart
       },
@@ -227,10 +272,14 @@
     },
     methods: {
       isKeyboardSelected (day) {
-        return day && this.newValue ? day.format('YYYY-MM-DD') === this.newValue.format('YYYY-MM-DD') : null
+        return day && this.newValue
+          ? day.format('YYYY-MM-DD') === this.newValue.format('YYYY-MM-DD')
+          : null
       },
       isToday (day) {
-        return moment(day.format('YYYY-MM-DD')).isSame(moment().format('YYYY-MM-DD'))
+        return moment(day.format('YYYY-MM-DD')).isSame(
+          moment().format('YYYY-MM-DD')
+        )
       },
       isDisabled (day) {
         return (
@@ -246,7 +295,10 @@
         return this.disabledDates.indexOf(day.format('YYYY-MM-DD')) > -1
       },
       isDateEnabled (day) {
-        return this.enabledDates.length === 0 || this.enabledDates.indexOf(day.format('YYYY-MM-DD')) > -1
+        return (
+          this.enabledDates.length === 0 ||
+          this.enabledDates.indexOf(day.format('YYYY-MM-DD')) > -1
+        )
       },
       isBeforeMinDate (day) {
         return day.isBefore(moment(this.minDate, 'YYYY-MM-DD'))
@@ -258,24 +310,39 @@
         const date = [
           ...(this.value && this.value.start
             ? [moment(this.value.start).format('YYYY-MM-DD')]
-            : this.range ? [] : [moment(this.value).format('YYYY-MM-DD')]),
+            : this.range
+              ? []
+              : [moment(this.value).format('YYYY-MM-DD')]),
           ...(this.value && this.value.end
             ? [moment(this.value.end).format('YYYY-MM-DD')]
-            : this.range ? [] : [moment(this.value).format('YYYY-MM-DD')])
+            : this.range
+              ? []
+              : [moment(this.value).format('YYYY-MM-DD')])
         ]
         return date.indexOf(day.format('YYYY-MM-DD')) > -1
       },
       isBetween (day) {
-        const range = this.value && this.value.end
-          ? moment.range(moment(this.value.start), moment(this.value.end)).contains(day)
-          : false
+        const range =
+          this.value && this.value.end
+            ? moment
+              .range(moment(this.value.start), moment(this.value.end))
+              .contains(day)
+            : false
         return range
       },
       firstInRange (day) {
-        return this.value && this.value.start ? moment(moment(this.value.start).format('YYYY-MM-DD')).isSame(day.format('YYYY-MM-DD')) : false
+        return this.value && this.value.start
+          ? moment(moment(this.value.start).format('YYYY-MM-DD')).isSame(
+            day.format('YYYY-MM-DD')
+          )
+          : false
       },
       lastInRange (day) {
-        return this.value && this.value.end ? moment(moment(this.value.end).format('YYYY-MM-DD')).isSame(day.format('YYYY-MM-DD')) : false
+        return this.value && this.value.end
+          ? moment(moment(this.value.end).format('YYYY-MM-DD')).isSame(
+            day.format('YYYY-MM-DD')
+          )
+          : false
       },
       isDayDisabledWeekly (day) {
         const dayConst = moment(day).day()
@@ -284,14 +351,20 @@
       isWeekEndDay (day) {
         const dayConst = moment(day).day()
         const weekendsDaysNumbers = [6, 0]
-        return this.noWeekendsDays ? weekendsDaysNumbers.indexOf(dayConst) > -1 : false
+        return this.noWeekendsDays
+          ? weekendsDaysNumbers.indexOf(dayConst) > -1
+          : false
       },
       selectDate (day) {
         if (this.range && !this.noShortcuts) {
           this.$refs['range-shortcuts'].selectedShortcut = null
         }
         if (this.range) {
-          if (!this.value.start || this.value.end || day.isBefore(moment(this.value.start))) {
+          if (
+            !this.value.start ||
+            this.value.end ||
+            day.isBefore(moment(this.value.start))
+          ) {
             this.value.start = day.format('YYYY-MM-DD')
             this.value.end = null
           } else {
@@ -309,9 +382,10 @@
       },
       selectYearMonth (event) {
         const { month, year } = event
-        const isBefore = year === this.month.year
-          ? month < this.month.month
-          : year < this.month.year
+        const isBefore =
+          year === this.month.year
+            ? month < this.month.month
+            : year < this.month.year
         this.transitionLabelName = isBefore ? `slidevprev` : `slidevnext`
         this.selectingYearMonth = null
         this.$emit('change-year-month', event)
@@ -321,224 +395,227 @@
 </script>
 
 <style lang="scss" scoped>
-  .datepicker-container {
-    width: 260px;
-    padding: 0 5px;
+.datepicker-container {
+  width: 260px;
+  padding: 0 5px;
+  position: relative;
+  &.range.has-shortcuts {
+    width: 400px;
+  }
+
+  &.p-0 {
+    padding: 0;
+  }
+  .padding-button {
+    padding: 5px 3px !important;
+  }
+  .calendar {
     position: relative;
-    &.range.has-shortcuts {
-      width: 400px;
+  }
+  .datepicker-controls {
+    height: 56px;
+    .arrow-month {
+      flex: 0 0 40px;
     }
-
-    &.p-0 {
-      padding: 0;
+    .datepicker-button {
+      background: transparent;
+      cursor: pointer;
+      padding: 0 10px;
+      border: none;
+      outline: none;
+      svg {
+        height: 17px;
+        width: 17px;
+        fill: #2c3e50;
+      }
+      &.datepicker-prev {
+        text-align: left !important;
+      }
+      &.datepicker-next {
+        text-align: right !important;
+      }
     }
-    .padding-button {
-      padding: 5px 3px !important;
-    }
-    .calendar {
+    .datepicker-container-label {
+      text-transform: capitalize;
+      font-size: 16px;
       position: relative;
-    }
-    .datepicker-controls {
       height: 56px;
-      .arrow-month {
-        flex: 0 0 40px;
-      }
-      .datepicker-button {
-        background: transparent;
-        cursor: pointer;
-        padding: 0 10px;
-        border: none;
-        outline: none;
-        svg {
-          height: 17px;
-          width: 17px;
-          fill: #2c3e50;
-        }
-        &.datepicker-prev {
-          text-align: left !important;
-        }
-        &.datepicker-next {
-          text-align: right !important;
-        }
-      }
-      .datepicker-container-label {
-        text-transform: capitalize;
-        font-size: 16px;
-        position: relative;
-        height: 56px;
-        overflow: hidden;
-      }
-      .date-buttons {
-        text-transform: capitalize;
-        font-weight: 400;
-      }
+      overflow: hidden;
     }
-    .month-container {
+    .date-buttons {
+      text-transform: capitalize;
+      font-weight: 400;
+    }
+  }
+  .month-container {
+    position: relative;
+    overflow: hidden;
+  }
+  .datepicker-days {
+    display: flex;
+    display: -ms-flexbox;
+    overflow: hidden;
+    flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    .datepicker-day {
+      height: 41px;
+      flex-grow: 1;
+      width: calc(100% / 7);
       position: relative;
-      overflow: hidden;
-    }
-    .datepicker-days {
-      display: flex;
-      display: -ms-flexbox;
-      overflow: hidden;
-      flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-      .datepicker-day {
-        height: 41px;
-        flex-grow: 1;
-        width: calc(100% / 7);
-        position: relative;
-        border: none;
-        background: transparent;
-        font-size: 13px;
-        outline: none;
-        &.enable {
-          cursor: pointer;
-        }
-
-        &-effect, .datepicker-today{
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          margin: auto;
-          height: 30px;
-          width: 30px;
-
-          border-radius: 4px;
-          -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-          transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-        }
-
-        .datepicker-day-effect {
-          margin: auto;
-          opacity: 0.6;
-          background: dodgerblue;
-          transform: scale(0);
-        }
-        .datepicker-today {
-          background-color: #eaeaea;
-        }
-        .datepicker-day-text {
-          position: relative;
-          color: #000;
-        }
-        .datepicker-day-keyboard-selected {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          margin: auto;
-          height: 26px;
-          width: 26px;
-          opacity: (.7);
-          border-radius: 50%;
-          -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-          transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-          background-color: #afafaf;
-        }
-        &:hover {
-          .datepicker-day-text {
-            color: #FFF;
-          }
-          .datepicker-day-effect {
-            transform: scale(1);
-            opacity: 0.6;
-          }
-        }
-
-        &.between {
-          .datepicker-day-text {
-            color: #FFF;
-          }
-          .datepicker-day-effect {
-            transform: scale(1);
-            opacity: 0.5;
-            border-radius: 0;
-            width: 100%;
-          }
-          &.first .datepicker-day-effect {
-            border-top-left-radius: 4px;
-            border-bottom-left-radius: 4px;
-          }
-          &.last .datepicker-day-effect {
-            border-top-right-radius: 4px;
-            border-bottom-right-radius: 4px;
-          }
-          .datepicker-day-keyboard-selected, &.first .datepicker-day-keyboard-selected, &.last .datepicker-day-keyboard-selected {
-            background-color: rgba(0, 0, 0, 0.66);
-          }
-        }
-        &.selected {
-          .datepicker-day-text {
-            color: #FFF;
-            font-weight: bold;
-          }
-          .datepicker-day-effect {
-            transform: scale(1);
-            opacity: 1;
-          }
-          .datepicker-day-keyboard-selected {
-            background-color: rgba(0, 0, 0, 0.66);
-          }
-        }
-        &.disabled {
-          .datepicker-day-text {
-            color: #CCC;
-          }
-          &.selected {
-            color: #fff;
-          }
-          .datepicker-day-effect {
-            transform: scale(0);
-            opacity: 0;
-          }
-        }
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      outline: none;
+      &.enable {
+        cursor: pointer;
       }
-    }
-    &.is-dark {
-      .datepicker-days .datepicker-day:not(.between):not(.selected) {
-        .datepicker-day-text {
-          color: #FFF;
-        }
-        &.disabled .datepicker-day-text {
-          color: lighten(#424242, 20%);
-        }
+
+      &-effect,
+      .datepicker-today {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        height: 30px;
+        width: 30px;
+
+        border-radius: 4px;
+        -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+        transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
       }
-      .datepicker-label {
-        color: white;
-      }
-      .text-muted {
-        color: lighten(#424242, 40%) !important;
-      }
-      .datepicker-button {
-        svg {
-          fill: #FFF;
-        }
+
+      .datepicker-day-effect {
+        margin: auto;
+        opacity: 0.6;
+        background: dodgerblue;
+        transform: scale(0);
       }
       .datepicker-today {
-        background-color: darken(#424242, 10%) !important;
+        background-color: #eaeaea;
       }
-    }
-  }
-  @media screen and (max-width: 415px) {
-    .datepicker-container {
-      width: 100%;
-      &:not(.inline) {
-        .datepicker-controls {
-          height: 36px !important;
+      .datepicker-day-text {
+        position: relative;
+        color: #000;
+      }
+      .datepicker-day-keyboard-selected {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        height: 26px;
+        width: 26px;
+        opacity: (0.7);
+        border-radius: 50%;
+        -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+        transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+        background-color: #afafaf;
+      }
+      &:hover {
+        .datepicker-day-text {
+          color: #fff;
+        }
+        .datepicker-day-effect {
+          transform: scale(1);
+          opacity: 0.6;
         }
       }
-      &.range.has-shortcuts {
-        width: 100%;
+
+      &.between {
+        .datepicker-day-text {
+          color: #fff;
+        }
+        .datepicker-day-effect {
+          transform: scale(1);
+          opacity: 0.5;
+          border-radius: 0;
+          width: 100%;
+        }
+        &.first .datepicker-day-effect {
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+        }
+        &.last .datepicker-day-effect {
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+        .datepicker-day-keyboard-selected,
+        &.first .datepicker-day-keyboard-selected,
+        &.last .datepicker-day-keyboard-selected {
+          background-color: rgba(0, 0, 0, 0.66);
+        }
       }
-      -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-      flex-direction: column;
-      flex-flow: column;
-      -moz-flex-direction: column;
+      &.selected {
+        .datepicker-day-text {
+          color: #fff;
+          font-weight: bold;
+        }
+        .datepicker-day-effect {
+          transform: scale(1);
+          opacity: 1;
+        }
+        .datepicker-day-keyboard-selected {
+          background-color: rgba(0, 0, 0, 0.66);
+        }
+      }
+      &.disabled {
+        .datepicker-day-text {
+          color: #ccc;
+        }
+        &.selected {
+          color: #fff;
+        }
+        .datepicker-day-effect {
+          transform: scale(0);
+          opacity: 0;
+        }
+      }
     }
   }
+  &.is-dark {
+    .datepicker-days .datepicker-day:not(.between):not(.selected) {
+      .datepicker-day-text {
+        color: #fff;
+      }
+      &.disabled .datepicker-day-text {
+        color: lighten(#424242, 20%);
+      }
+    }
+    .datepicker-label {
+      color: white;
+    }
+    .text-muted {
+      color: lighten(#424242, 40%) !important;
+    }
+    .datepicker-button {
+      svg {
+        fill: #fff;
+      }
+    }
+    .datepicker-today {
+      background-color: darken(#424242, 10%) !important;
+    }
+  }
+}
+@media screen and (max-width: 415px) {
+  .datepicker-container {
+    width: 100%;
+    &:not(.inline) {
+      .datepicker-controls {
+        height: 36px !important;
+      }
+    }
+    &.range.has-shortcuts {
+      width: 100%;
+    }
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    flex-flow: column;
+    -moz-flex-direction: column;
+  }
+}
 </style>

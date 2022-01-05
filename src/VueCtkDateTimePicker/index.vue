@@ -70,6 +70,7 @@
       :custom-shortcuts="customShortcuts"
       :no-keyboard="noKeyboard"
       :right="right"
+      :months-only="monthsOnly"
       :behaviour="_behaviour"
       @validate="validate"
       @close="closePicker"
