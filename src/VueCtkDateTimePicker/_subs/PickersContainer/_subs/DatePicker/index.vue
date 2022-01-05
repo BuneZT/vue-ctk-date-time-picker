@@ -173,7 +173,7 @@
           mode="month"
           :month="month"
           :hide-close="true"
-          @input="selectYearMonth"
+          @input="selectMonthRange"
         />
       </div>
 
@@ -360,6 +360,7 @@
           this.$refs['range-shortcuts'].selectedShortcut = null
         }
         if (this.range) {
+          console.log(day.format())
           if (
             !this.value.start ||
             this.value.end ||
@@ -374,6 +375,11 @@
         } else {
           this.$emit('input', moment(day).format('YYYY-MM-DD'))
         }
+      },
+      selectMonthRange (month) {
+        this.selectYearMonth(month)
+        this.selectDate(moment(new Date(month.year, month.month, 1)))
+        this.selectDate(moment(new Date(month.year, month.month + 1, 0)))
       },
       changeMonth (val) {
         this.transitionDaysName = `slide${val}`
