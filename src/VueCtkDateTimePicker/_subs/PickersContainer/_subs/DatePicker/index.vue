@@ -362,7 +362,6 @@
           this.$refs['range-shortcuts'].selectedShortcut = null
         }
         if (this.range) {
-          console.log(day.format())
           if (
             !this.value.start ||
             this.value.end ||
