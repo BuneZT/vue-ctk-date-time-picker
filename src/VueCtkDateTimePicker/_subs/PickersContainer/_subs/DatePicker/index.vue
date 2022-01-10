@@ -32,7 +32,7 @@
               flex
               align-center
             "
-            @click="changeMonth('prev')"
+            @click="changePeriod('prev')"
           >
             <svg viewBox="0 0 1000 1000">
               <path
@@ -89,7 +89,7 @@
               align-center
               justify-content-right
             "
-            @click="changeMonth('next')"
+            @click="changePeriod('next')"
           >
             <svg viewBox="0 0 1000 1000">
               <path
@@ -378,9 +378,18 @@
         }
       },
 
-      changeMonth (val) {
+      changePeriod (val) {
         this.transitionDaysName = `slide${val}`
         this.transitionLabelName = `slidev${val}`
+
+        if (this.monthsOnly) {
+          this.selectYearMonth(
+            {
+              month: this.month.month,
+              year: val === 'next' ? this.month.year + 1 : this.month.year - 1
+            })
+          return
+        }
         this.$emit('change-month', val)
       },
       selectYearMonth (event) {
