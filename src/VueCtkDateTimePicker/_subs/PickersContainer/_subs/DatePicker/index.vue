@@ -175,7 +175,7 @@
           mode="month"
           :month="month"
           :hide-close="true"
-          @input="selectMonthRange"
+          @input="selectYearMonth"
         />
       </div>
 
@@ -377,11 +377,7 @@
           this.$emit('input', moment(day).format('YYYY-MM-DD'))
         }
       },
-      selectMonthRange (month) {
-        this.selectYearMonth(month)
-        this.selectDate(moment(new Date(month.year, month.month, 1)))
-        this.selectDate(moment(new Date(month.year, month.month + 1, 0)))
-      },
+
       changeMonth (val) {
         this.transitionDaysName = `slide${val}`
         this.transitionLabelName = `slidev${val}`
@@ -396,6 +392,11 @@
         this.transitionLabelName = isBefore ? `slidevprev` : `slidevnext`
         this.selectingYearMonth = null
         this.$emit('change-year-month', event)
+
+        if (this.monthsOnly) {
+          this.selectDate(moment(new Date(year, month, 1)))
+          this.selectDate(moment(new Date(year, month + 1, 0)))
+        }
       }
     }
   }
