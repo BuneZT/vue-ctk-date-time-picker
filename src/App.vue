@@ -1,7 +1,7 @@
 <template>
   <div
     id="app"
-    :class="{'dark': darkMode}"
+    :class="{ dark: darkMode }"
   >
     <div
       id="vueCtkDateTimePicker"
@@ -20,9 +20,7 @@
         >
         <h1>CtkDatetimePicker</h1>
         <h3>A VueJs component for select date & time</h3>
-        <div
-          class="container lm-mt-4"
-        >
+        <div class="container lm-mt-4">
           <a
             class="lm-btn lm-btn-dark lm-mr-2"
             target="_blank"
@@ -49,7 +47,7 @@
           class="lm-btn lm-btn-success"
           @click="darkMode = !darkMode"
         >
-          {{ darkMode ? 'Disable' : 'Enable' }} Dark Mode
+          {{ darkMode ? "Disable" : "Enable" }} Dark Mode
         </button>
       </header>
       <div
@@ -58,11 +56,11 @@
       >
         <div class="flex flex-wrap align-center justify-content-center">
           <div
-            :class="{'dark': darkMode}"
+            :class="{ dark: darkMode }"
             class="component-container"
           >
             <p>Inititale value : '2018-04-05T04:26'</p>
-            <p>v-model = {{ value2 || 'null' }}</p>
+            <p>v-model = {{ value2 || "null" }}</p>
             <br>
             <div class="flex">
               <CtkDateTimePicker
@@ -87,7 +85,7 @@
           <div
             v-for="demo in demoComponents"
             :key="demo.title"
-            :class="{'dark': darkMode}"
+            :class="{ dark: darkMode }"
             class="component-container"
           >
             <h3>{{ demo.title }}</h3>
@@ -95,7 +93,7 @@
             <hr>
             <div class="flex flex-wrap justify-content-between">
               <p><b>Inititale value</b> : {{ demo.initial }}</p>
-              <p><b>v-model</b> = {{ demo.value || 'null' }}</p>
+              <p><b>v-model</b> = {{ demo.value || "null" }}</p>
             </div>
             <hr>
             <button
@@ -109,70 +107,81 @@
               class="flex flex-wrap component options"
             >
               <div class="flex-1">
-                <h4 style="margin-bottom: 10px;">
+                <h4 style="margin-bottom: 10px">
                   String options
                 </h4>
                 <div
                   v-for="str in stringOptions"
                   :key="str"
                   class="flex"
-                  style="margin-bottom: 10px;"
+                  style="margin-bottom: 10px"
                 >
                   <input
                     v-model="demo.options[str]"
                     type="text"
                   >
-                  <span style="margin-left: 15px;">
+                  <span style="margin-left: 15px">
                     {{ str }}
                   </span>
                 </div>
-                <h4 style="margin-bottom: 10px;">
+                <h4 style="margin-bottom: 10px">
                   Integer options
                 </h4>
                 <div
                   v-for="int in intOptions"
                   :key="int"
                   class="flex"
-                  style="margin-bottom: 10px;"
+                  style="margin-bottom: 10px"
                 >
                   <input
                     v-model="demo.options[int]"
                     type="number"
                   >
-                  <span style="margin-left: 15px;">
+                  <span style="margin-left: 15px">
                     {{ int }}
                   </span>
                 </div>
               </div>
               <div class="flex-1">
-                <h4 style="margin-bottom: 10px;">
+                <h4 style="margin-bottom: 10px">
                   Boolean options
                 </h4>
                 <div
                   v-for="opt in booleanOptions"
                   :key="opt"
                   class="flex"
-                  style="margin-bottom: 10px;"
+                  style="margin-bottom: 10px"
                 >
                   <CheckboxInput
                     :id="`${demo.id}${opt}`"
                     v-model="demo.options[opt]"
-                    :disabled="opt === 'onlyDate' || opt === 'onlyTime' || opt === 'range'"
+                    :disabled="
+                      opt === 'onlyDate' ||
+                        opt === 'onlyTime' ||
+                        opt === 'range'
+                    "
                   />
-                  <span style="margin-left: 15px;">
-                    {{ opt }} {{ opt === 'onlyDate' || opt === 'onlyTime' || opt === 'range' ? '(disabled)' : '' }}
+                  <span style="margin-left: 15px">
+                    {{ opt }}
+                    {{
+                      opt === "onlyDate" ||
+                        opt === "onlyTime" ||
+                        opt === "range"
+                        ? "(disabled)"
+                        : ""
+                    }}
                   </span>
                 </div>
               </div>
               <div>
-                <h4 style="margin-bottom: 10px;">
+                <h4 style="margin-bottom: 10px">
                   Options not editable (is Array)
                 </h4>
                 <span
                   v-for="opt in optionsNotEditable"
                   :key="opt"
                 >
-                  {{ opt + ', ' }}
+                  {{ opt + ", " }}
                 </span>
               </div>
             </div>
@@ -221,16 +230,25 @@
                 :disabled-weekly="demo.options.disabledWeekly"
                 :right="demo.options.right"
                 :no-clear-button="demo.options.noClearButton"
+                :months-only="demo.options.monthsOnly"
               >
                 <input
-                  v-if="demo.options && demo.options.slot && demo.options.slot.type === 'input'"
+                  v-if="
+                    demo.options &&
+                      demo.options.slot &&
+                      demo.options.slot.type === 'input'
+                  "
                   type="text"
                 >
                 <button
-                  v-else-if="demo.options && demo.options.slot && demo.options.slot.type === 'button'"
+                  v-else-if="
+                    demo.options &&
+                      demo.options.slot &&
+                      demo.options.slot.type === 'button'
+                  "
                   type="button"
                   class="lm-btn"
-                  style="margin: 0;"
+                  style="margin: 0"
                 />
               </CtkDateTimePicker>
             </div>
@@ -248,26 +266,58 @@
   export default {
     name: 'App',
     components: {
-      CtkDateTimePicker, CheckboxInput
+      CtkDateTimePicker,
+      CheckboxInput
     },
     data () {
       return {
         devMode: false,
         booleanOptions: [
-          'noHeader', 'autoClose', 'error', 'dark', 'overlay', 'noWeekendDays', 'noShortcuts',
-          'noButton', 'onlyDate', 'range', 'onlyTime', 'inline', 'persistent', 'disabled', 'noButtonNow', 'noValueToCustomElem',
-          'noKeyboard', 'right', 'noClearButton', 'noLabel'
+          'noHeader',
+          'autoClose',
+          'error',
+          'dark',
+          'overlay',
+          'noWeekendDays',
+          'noShortcuts',
+          'noButton',
+          'onlyDate',
+          'range',
+          'onlyTime',
+          'inline',
+          'persistent',
+          'disabled',
+          'noButtonNow',
+          'noValueToCustomElem',
+          'noKeyboard',
+          'right',
+          'noClearButton',
+          'noLabel',
+          'monthsOnly'
         ],
         stringOptions: [
-          'id', 'label', 'hint', 'color', 'buttonColor', 'position', 'format', 'formatted', 'outputFormat',
-          'minDate', 'maxDate', 'inputSize', 'buttonNowTranslation', 'disabledWeekly'
+          'id',
+          'label',
+          'hint',
+          'color',
+          'buttonColor',
+          'position',
+          'format',
+          'formatted',
+          'outputFormat',
+          'minDate',
+          'maxDate',
+          'inputSize',
+          'buttonNowTranslation',
+          'disabledWeekly'
         ],
         optionsNotEditable: [
-          'customShortcuts', 'disabledDates', 'disabledHours', 'locale'
+          'customShortcuts',
+          'disabledDates',
+          'disabledHours',
+          'locale'
         ],
-        intOptions: [
-          'minuteInterval', 'firstDayOfWeek'
-        ],
+        intOptions: ['minuteInterval', 'firstDayOfWeek'],
         demoComponents: [
           {
             id: '1',
@@ -286,7 +336,8 @@
           {
             id: '2',
             title: 'Range Date Picker',
-            description: 'Date Range selector - With custom element to trigger the component (only input or button)',
+            description:
+              'Date Range selector - With custom element to trigger the component (only input or button)',
             editOption: false,
             initial: {
               start: '2018-04-05',
@@ -311,7 +362,8 @@
           {
             id: '3',
             title: 'Date Picker',
-            description: 'Date selector - right position - noLabel true - With large input (input-size="lg") - format: "MM-DD-YYYY" - formatted: "ll"',
+            description:
+              'Date selector - right position - noLabel true - With large input (input-size="lg") - format: "MM-DD-YYYY" - formatted: "ll"',
             editOption: false,
             initial: '14-01-2019',
             value: '14-01-2019',
@@ -330,7 +382,8 @@
           },
           {
             id: '4',
-            title: 'Time Picker - With small input (input-size="sm") & minute-interval="10"',
+            title:
+              'Time Picker - With small input (input-size="sm") & minute-interval="10"',
             description: 'Time selector',
             editOption: false,
             initial: '11:26 am',
@@ -350,7 +403,8 @@
           {
             id: '5',
             title: 'Inline Picker',
-            description: 'Inline selector with keyboard accessibility disabled & disabled weekly dates (available for all pickers)',
+            description:
+              'Inline selector with keyboard accessibility disabled & disabled weekly dates (available for all pickers)',
             editOption: false,
             initial: {
               start: '2018-04-05',
@@ -400,7 +454,8 @@
           {
             id: '8',
             title: 'Min and Max date with time in 12h-format',
-            description: 'minDate: 2019-03-03 8:10 pm, maxDate: 2019-06-24 9:14 am',
+            description:
+              'minDate: 2019-03-03 8:10 pm, maxDate: 2019-06-24 9:14 am',
             initial: '2019-03-03 8:10 pm',
             value: '2019-03-06 8:20 pm',
             editOption: false,
@@ -416,7 +471,10 @@
             title: 'Enabled/Disabled dates Picker',
             description: '',
             editOption: false,
-            initial: { 'disabledDates': ['2021-02-22'], 'enabledDates': ['2021-02-21', '2021-02-22', '2021-02-23'] },
+            initial: {
+              disabledDates: ['2021-02-22'],
+              enabledDates: ['2021-02-21', '2021-02-22', '2021-02-23']
+            },
             value: '2021-02-22',
             options: {
               id: 'EnabledDisabledDatesPicker',
@@ -424,6 +482,38 @@
               enabledDates: ['2021-02-21', '2021-02-22', '2021-02-23'],
               inline: true,
               format: 'YYYY-MM-DD HH:mm'
+            }
+          },
+          {
+            id: '10',
+            title: 'Month Picker',
+            description: '',
+            editOption: false,
+            initial: {
+              range: true,
+              inline: true,
+              format: 'YYYY-MM-DD HH:mm',
+              noLabel: true,
+              onlyDate: true,
+              noHeader: true,
+              noButton: true,
+              overlay: true,
+              monthsOnly: true
+
+            },
+            value: '2021-02-22',
+            options: {
+              id: 'MonthPicker',
+              inline: true,
+              format: 'YYYY-MM-DD HH:mm',
+              range: true,
+              noLabel: true,
+              onlyDate: true,
+              noHeader: true,
+              noButton: true,
+              overlay: true,
+              noShortcuts: true,
+              monthsOnly: true
             }
           }
         ],
@@ -448,12 +538,21 @@
         maxDate: '2018-04-12',
         darkMode: false,
         shortcutsTranslation: {
-          'this_week': 'Cette semaine',
-          'last_30_days': '30 derniers jours',
-          'last_month': 'Mois précédent',
-          'last_year': 'L\'année dernière'
+          this_week: 'Cette semaine',
+          last_30_days: '30 derniers jours',
+          last_month: 'Mois précédent',
+          last_year: "L'année dernière"
         },
-        disabledDates: ['2018-04-03', '2018-04-07', '2018-04-09', '2018-04-11', '2018-04-13', '2018-04-15', '2018-04-17', '2018-04-19'],
+        disabledDates: [
+          '2018-04-03',
+          '2018-04-07',
+          '2018-04-09',
+          '2018-04-11',
+          '2018-04-13',
+          '2018-04-15',
+          '2018-04-17',
+          '2018-04-19'
+        ],
         disabledHours: Array.from(new Array(8), (x, i) => `0${i}`).concat(
           Array.from(new Array(23), (x, i) => {
             if (i + 1 > 18) {
@@ -479,42 +578,50 @@
 </script>
 
 <style lang="scss">
-  @import "./assets/scss/main.scss";
-  html, body, #app, #vueCtkDateTimePicker {
-    margin: 0;
-    min-height: 100%;
-    min-width: 100%;
-    font-size: 14px;
-  }
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    &.dark {
-      background-color: darken(#424242, 20%);
-      header {
-        color: rgba(255, 255, 255, 0.70);
-      }
+@import "./assets/scss/main.scss";
+html,
+body,
+#app,
+#vueCtkDateTimePicker {
+  margin: 0;
+  min-height: 100%;
+  min-width: 100%;
+  font-size: 14px;
+}
+#app {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  &.dark {
+    background-color: darken(#424242, 20%);
+    header {
+      color: rgba(255, 255, 255, 0.7);
     }
   }
-  header {
-    text-align: center;
-  }
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-  img {
-    height: 140px;
-  }
-  h3, h4, h1, p {
-    margin: 0;
-  }
-  h3 {
-    margin-bottom: 10px;
-  }
-  hr {
-    border-top: 1px solid #ebebeb;
-    border-bottom: 0;
-    margin: 20px 0;
-  }
+}
+header {
+  text-align: center;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+img {
+  height: 140px;
+}
+h3,
+h4,
+h1,
+p {
+  margin: 0;
+}
+h3 {
+  margin-bottom: 10px;
+}
+hr {
+  border-top: 1px solid #ebebeb;
+  border-bottom: 0;
+  margin: 20px 0;
+}
 </style>
