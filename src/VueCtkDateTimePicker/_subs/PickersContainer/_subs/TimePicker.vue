@@ -3,48 +3,61 @@
     ref="time-picker"
     :class="{'inline': inline, 'is-dark': dark, 'with-border': !onlyTime }"
     :style="[{height: `${height}px`}]"
-    class="time-picker flex flex-fixed flex-1"
+    class="time-picker flex align-center"
   >
+    <div class="time-input-wrapper">
+      <input
+        v-model="textTime"
+        class="text-time-input"
+        min="00:00"
+        :max="isTwelveFormat ? '12:00' : '24:00'"
+        type="time"
+        :step="minuteInterval * 60"
+        @input="timeInput"
+      >
+    </div>
     <div
-      v-for="column in columns"
-      :key="column.type"
-      :ref="column.type"
-      :class="[`time-picker-column-${column.type}`]"
-      class="time-picker-column flex-1 flex flex-direction-column text-center"
-      @scroll="noScrollEvent
-        ? null
-        : column.type === 'hours' ? onScrollHours($event) : column.type === 'minutes' ? onScrollMinutes($event) : onScrollApms($event)
-      "
+      v-show="apms"
+      style="width: 40px"
     >
-      <div>
-        <div
-          class="before"
-          :style="[columnPadding]"
-        />
-        <button
-          v-for="item in column.items"
-          :key="item.item"
-          type="button"
-          tabindex="-1"
-          class="time-picker-column-item flex align-center justify-content-center"
-          :class="{
-            active: isActive(column.type, item.value),
-            disabled: item.disabled
-          }"
-          @click="item.disabled ? null : setTime(item.value, column.type)"
-        >
-          <span
-            :style="styleColor"
-            class="time-picker-column-item-effect"
+      <div
+        ref="apms"
+        :class="[`time-picker-column-apms`]"
+        class="time-picker-column flex-1 flex flex-direction-column text-center"
+        @scroll="noScrollEvent
+          ? null
+          : onScrollApms($event)"
+      >
+        <div>
+          <div
+            class="before"
+            :style="[columnPadding]"
           />
-          <span class="time-picker-column-item-text flex-1">
-            {{ item.item }}
-          </span>
-        </button>
-        <div
-          class="after"
-          :style="[columnPadding]"
-        />
+          <button
+            v-for="item in apms"
+            :key="item.item"
+            type="button"
+            tabindex="-1"
+            class="time-picker-column-item flex align-center justify-content-center"
+            :class="{
+              active: isActive('amps', item.value),
+              disabled: item.disabled
+            }"
+            @click="item.disabled ? null : setTime(item.value, 'apms')"
+          >
+            <span
+              :style="styleColor"
+              class="time-picker-column-item-effect"
+            />
+            <span class="time-picker-column-item-text flex-1">
+              {{ item.item }}
+            </span>
+          </button>
+          <div
+            class="after"
+            :style="[columnPadding]"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -110,6 +123,7 @@
         hour: null,
         minute: null,
         apm: null,
+        textTime: '',
         oldvalue: this.value,
         columnPadding: {},
         noScrollEvent: !!(this.value && !this.inline),
@@ -145,27 +159,16 @@
         return ArrayMinuteRange(0, 60, twoDigit, this.minuteInterval, this._disabledMinutes)
       },
       apms () {
-        const ampm = this.isTwelveFormat
-          ? this.minTime
-            ? moment(this.minTime, 'hh:mm a').format('a')
-            : this.maxTime
-              ? moment(this.maxTime, 'hh:mm a').format('a')
-              : ''
-          : ''
-        const upper = ampm
-          ? [{ value: ampm.toUpperCase(), item: ampm.toUpperCase() }]
-          : [{ value: 'AM', item: 'AM' }, { value: 'PM', item: 'PM' }]
-        const lower = ampm
-          ? [{ value: ampm, item: ampm }]
-          : [{ value: 'am', item: 'am' }, { value: 'pm', item: 'pm' }]
         return this.isTwelveFormat
-          ? this.format.includes('A') ? upper : lower
+          ? this.format.includes('A')
+            ? [{ value: 'AM', item: 'AM' }, { value: 'PM', item: 'PM' }]
+            : [{ value: 'am', item: 'am' }, { value: 'pm', item: 'pm' }]
           : null
       },
       columns () {
         return [
-          { type: 'hours', items: this.hours },
-          { type: 'minutes', items: this.minutes },
+          // { type: 'hours', items: this.hours },
+          // { type: 'minutes', items: this.minutes },
           ...(this.apms ? [{ type: 'apms', items: this.apms }] : [])
         ]
       },
@@ -280,6 +283,24 @@
       this.initPositionView()
     },
     methods: {
+      timeInput (e) {
+        const els = this.textTime.split(':')
+        if (els.length !== 2) return
+        const isAfternoon = this.apm ? this.apm === 'pm' || this.apm === 'PM' : false
+
+        const hour = parseInt(els[0], 10) + (isAfternoon ? 12 : 0)
+        const minute = parseInt(els[1], 10)
+
+        if (!isNaN(hour) && hour <= 24 && hour >= 0) {
+          this.hour = hour
+        }
+
+        if (!isNaN(minute) && minute <= 60 && minute >= 0) {
+          this.minute = minute
+        }
+
+        this.emitValue()
+      },
       getValue (scroll) {
         const itemHeight = 28
         const scrollTop = scroll.target.scrollTop
@@ -353,7 +374,18 @@
             ? this.apms.length > 1 ? this.apms[1].value : this.apms[0].value
             : this.apms[0].value
           : null
+
+        this.setTextInput()
         this.columnPad()
+      },
+      setTextInput () {
+        const isAfternoon = this.apm ? this.apm === 'pm' || this.apm === 'PM' : false
+        const minute = parseInt(moment(this.value, this.format).format('mm'))
+        let hour = parseInt(moment(this.value, this.format).format('HH'))
+        if (isAfternoon) {
+          hour -= 12
+        }
+        this.textTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
       },
       columnPad () {
         if (this.$refs['time-picker'] && (this.visible || this.inline)) {
@@ -370,28 +402,30 @@
           return null
         }
       },
-      initPositionView () {
+      async initPositionView () {
         this.noScrollEvent = true
-        const containers = ['hours', 'minutes']
+        const containers = []
         if (this.apms) containers.push('apms')
-        setTimeout(() => {
-          containers.forEach((container) => {
-            const elem = this.$refs[container][0]
-            elem.scrollTop = 0
-            const selected = elem.querySelector(`.time-picker-column-item.active`)
-            if (selected) {
-              const boundsSelected = selected.getBoundingClientRect()
-              const boundsElem = elem.getBoundingClientRect()
-              const timePickerHeight = this.$refs['time-picker'].clientHeight
-              if (boundsSelected && boundsElem) {
-                elem.scrollTop = (28 / 2) + boundsSelected.top - boundsElem.top - timePickerHeight / 2
-              }
+
+        await this.$nextTick()
+        containers.forEach((container) => {
+          const elem = this.$refs[container][0]
+          if (!elem) return false
+
+          elem.scrollTop = 0
+          const selected = elem.querySelector(`.time-picker-column-item.active`)
+          if (selected) {
+            const boundsSelected = selected.getBoundingClientRect()
+            const boundsElem = elem.getBoundingClientRect()
+            const timePickerHeight = this.$refs['time-picker'].clientHeight
+            if (boundsSelected && boundsElem) {
+              elem.scrollTop = (28 / 2) + boundsSelected.top - boundsElem.top - timePickerHeight / 2
             }
-            setTimeout(() => {
-              this.noScrollEvent = false
-            }, 500)
-          })
-        }, 0)
+          }
+          setTimeout(() => {
+            this.noScrollEvent = false
+          }, 500)
+        })
       },
       getAvailableHour () {
         const availableHours = this.hours.find((element) => {
@@ -434,6 +468,7 @@
     max-width: 160px;
     position: relative;
     z-index: 1;
+
     &.inline {
       width: 100%;
       max-width: 100%;
@@ -451,8 +486,8 @@
       right: 0;
       box-sizing: border-box;
       text-align: left;
-      border-top: 1px solid #CCC;
-      border-bottom: 1px solid #CCC;
+      // border-top: 1px solid #CCC;
+      // border-bottom: 1px solid #CCC;
     }
     &-column {
       position: relative;
@@ -539,6 +574,32 @@
       }
     }
   }
+
+  .align-center {
+    align-items: center;
+  }
+
+  .time-input-wrapper {
+    width: 100%;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .text-time-input {
+    border: none;
+    height: 40px;
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+
+    &::-webkit-clear-button {
+      display: none;
+    }
+    &::-webkit-inner-spin-button {
+      display: none;
+    }
+  }
+
   @media screen and (max-width: 415px) {
     .time-picker.inline {
       flex: auto;

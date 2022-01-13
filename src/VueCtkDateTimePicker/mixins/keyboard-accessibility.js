@@ -55,8 +55,8 @@ export default {
             this.nextMonth()
           } else if (e.keyCode === 27) {
             this.$emit('close')
+            if ('activeElement' in document) document.activeElement.blur()
           }
-          if ('activeElement' in document) document.activeElement.blur()
         } catch (err) {
           window.console.error('An error occured while switch date', e)
         }
