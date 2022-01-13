@@ -52,6 +52,7 @@
             <CustomButton
               v-for="m in [month]"
               :key="m.month"
+              style="max-width: 75px;"
               class="date-buttons lm-fs-16 padding-button flex-1"
               :color="color"
               :dark="dark"
@@ -68,6 +69,7 @@
             <CustomButton
               v-for="y in [year]"
               :key="y"
+              style="max-width: 40px;"
               class="date-buttons lm-fs-16 padding-button flex-1"
               :color="color"
               :dark="dark"
