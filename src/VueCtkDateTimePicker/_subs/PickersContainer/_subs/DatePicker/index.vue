@@ -52,8 +52,7 @@
             <CustomButton
               v-for="m in [month]"
               :key="m.month"
-              style="max-width: 75px;"
-              class="date-buttons lm-fs-16 padding-button flex-1"
+              class="date-buttons lm-fs-16 padding-button flex"
               :color="color"
               :dark="dark"
               @click="selectingYearMonth = 'month'"
@@ -64,13 +63,12 @@
           <TransitionGroup
             :name="transitionLabelName"
             class="h-100 flex align-center flex-1 flex justify-content-left"
-            :class="{'justify-content-center': monthsOnly }"
+            :class="{'justify-content-center': monthsOnly}"
           >
             <CustomButton
               v-for="y in [year]"
               :key="y"
-              style="max-width: 40px;"
-              class="date-buttons lm-fs-16 padding-button flex-1"
+              class="date-buttons lm-fs-16 padding-button flex"
               :color="color"
               :dark="dark"
               @click="selectingYearMonth = 'year'"
