@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
-    "@vue/cli-plugin-eslint": "^3.3.0",
+    "@vue/cli-plugin-eslint": "^5.0.0-beta.6",
     "@vue/cli-plugin-unit-jest": "^3.5.1",
     "@vue/cli-service": "^3.2.2",
     "@vue/eslint-config-standard": "^4.0.0",
@@ -38,8 +38,8 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
-    "eslint": "^5.8.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^7.20.0",
     "nuxt": "^2.9.2",
     "sass-loader": "^7.1.0",
     "vue-cli-plugin-webpack-bundle-analyzer": "^1.2.0",
@@ -91,6 +91,11 @@
   },
   "types": "dist/index.d.ts",
   "dependencies": {
-    "sass": "^1.44.0"
+    "acorn": "^8.7.0",
+    "moment": "^2.29.1",
+    "moment-range": "^4.0.2",
+    "sass": "^1.44.0",
+    "v-click-outside": "^2.0.2",
+    "webpack": "^4.0.0"
   }
 }
