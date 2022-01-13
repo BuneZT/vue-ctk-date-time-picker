@@ -3,7 +3,10 @@
     class="year-month-selector flex flex-direction-column"
     :class="{'dark': dark}"
   >
-    <div class="flex justify-content-right">
+    <div
+      v-if="!hideClose"
+      class="flex justify-content-right"
+    >
       <CustomButton
         :color="dark ? '#757575' : '#424242'"
         :dark="dark"
@@ -15,14 +18,14 @@
         </span>
       </CustomButton>
     </div>
-    <div class="flex-1 flex flex-wrap justify-content-between align-center">
+    <div class="flex-1 flex flex-wrap justify-content-center align-center">
       <CustomButton
         v-for="(m, index) in months"
         :key="index"
         :color="color"
         :selected="currentMonth === index"
         :dark="dark"
-        class="month-button"
+        class="select-button"
         with-border
         @click="selectMonth(index)"
       >
@@ -33,6 +36,7 @@
         :key="year"
         :color="color"
         :dark="dark"
+        class="select-button"
         :selected="currentYear === year"
         with-border
         @click="selectYear(year)"
@@ -64,7 +68,8 @@
       dark: { type: Boolean, default: null },
       color: { type: String, default: null },
       mode: { type: String, default: null },
-      month: { type: Object, default: null }
+      month: { type: Object, default: null },
+      hideClose: { type: Boolean, default: false }
     },
     data () {
       return {
@@ -123,8 +128,11 @@
       color: white;
       background-color: #424242;
     }
-    .month-button {
+    .select-button {
       text-transform: capitalize;
+      margin-right: 2px;
+      margin-left: 2px;
+
     }
   }
 </style>
